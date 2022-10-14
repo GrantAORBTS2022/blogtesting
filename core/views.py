@@ -5,13 +5,34 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Profile
 from .models import Post
+from .models import Service
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
+
+# from django.contrib.signin.shortcuts import get_current_site
+# from django.template.loader import render_to_string
+# from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+# from django.utils.encoding import force_bytes, force_str, force_text
+
+def send_action_email(user, request):
+    current_site = get_current_site(request)
+    email_subject = 'Activate your account'
+    # email_body = render_to_string('authentication/activate.html',{
+    #     'user':user,
+    #     'domain':current_site,
+    #     'uid':urlsafe_base64_encode(force_bytes(user.pk)).
+    #     'token':
+    # })
 
 # Create your views here.
 @login_required(login_url='signin')
 def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
-    return render(request, 'index.html',{'user_profile':user_profile})
+    services = Service.objects.all()
+    return render(request, 'index.html',{'user_profile':user_profile, 'services':services})
 
 @login_required(login_url='signin')
 def upload(request):
@@ -78,15 +99,46 @@ def signup(request):
                 user = User.objects.create_user(username=username,email=email,password=password)
                 user.save()
 
-                user_login = auth.authenticate(username="username",password="password")
-                auth.login(request,user)
+                
 
                 user_model = User.objects.get(username=username)
                 new_profile = Profile.objects.create(user=user_model, id_user=user_model.id)
                 new_profile.save()
 
-                return redirect('setting')
 
+
+
+                # send_action_email(user,request)
+
+                # user_object = User.objects.get(username=request.user.username)
+                # user_profile = Profile.objects.get(user=user_object)
+                # # select_profile = Profile.objects.get(user=username)
+
+                # if not user_profile.is_email_verified:
+
+                #     messages.info(request, 'You can now login.')
+                #     return redirect('signup')
+
+                # else:
+
+                #     messages.info(request, 'You can now login.')
+                #     return redirect('signup')
+
+                # user_login = auth.authenticate(username="username",password="password")
+                # auth.login(request,user)
+
+                # user_profile = Profile.objects.get(user=request.user)
+
+
+                # if not user_profile.is_email_verified:
+                #     messages.info(request, 'Email is not verified, please check you email inbox.')
+                #     return redirect('signin')
+                # else:
+                #     messages.info(request, 'You can now login.')
+                #     return redirect('signup')
+                
+
+                
         else:
             messages.info(request, 'Password Not Matching')
             return redirect('signup')
@@ -100,7 +152,14 @@ def signin(request):
 
         user = auth.authenticate(username=username, password=password)
 
+        
+
         if user is not None:
+
+            if not user.is_email_verified:
+                messages.info(request, 'Not Verified')
+                return redirect('signin')
+                
             auth.login(request, user)
             return redirect('/')
         else:
@@ -114,3 +173,17 @@ def signin(request):
 def logout(request):
     auth.logout(request)
     return redirect('signin')
+
+
+@login_required(login_url='signin')
+def service(request): 
+
+    if request.method == 'POST':
+        description = request.POST['description']
+        user = request.user.username
+        new_service = Service.objects.create(user=user, description=description)
+        new_service.save()
+        messages.info(request, 'Services Created')
+        return redirect('service')
+    else:
+        return render(request, 'service.html')

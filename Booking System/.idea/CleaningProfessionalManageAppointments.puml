@@ -1,0 +1,41 @@
+@startuml
+actor CleaningProfessional #green
+participant Interface
+participant CleaningProfessionalManageAppointments
+database datasource
+
+CleaningProfessional -> Interface : loginWithEmail
+Interface -> CleaningProfessionalManageAppointments : CleaningProfessionalGetDetailsByEmail(String)
+CleaningProfessionalManageAppointments -> datasource : CleaningProfessionalGetDetailsByEmail(String)
+datasource --> CleaningProfessionalManageAppointments: CleaningProfessional = CleaningProfessionalGetDetailsByEmail(String)
+CleaningProfessionalManageAppointments -> datasource : getAppointmentsByCleaningProfessional(CleaningProfessional)
+
+alt No Booking/Appointments
+datasource --> CleaningProfessionalManageAppointments : 0 = getAppointmentsByCleaningProfessional(CleaningProfessional)
+CleaningProfessionalManageAppointments --> Interface : display none on upcoming Appointments
+end
+
+datasource --> CleaningProfessionalManageAppointments : Appointments = getAppointmentsByCleaningProfessional(CleaningProfessional)
+CleaningProfessionalManageAppointments --> Interface :display Upcoming/Previous/Cancelled appointments
+CleaningProfessional -> Interface : viewBookingDetails
+Interface -> CleaningProfessionalManageAppointments : viewBookingDetails(int)
+CleaningProfessionalManageAppointments -> datasource : viewBookingDetails(int)
+datasource --> CleaningProfessionalManageAppointments : Booking = viewBookingDetails(int)
+CleaningProfessionalManageAppointments --> Interface :  Booking = viewBookingDetails(int)
+
+CleaningProfessional -> Interface : rateMyCleaningServiceByAppointment
+Interface -> CleaningProfessionalManageAppointments : rateMyCleaningServiceByAppointment(int)
+CleaningProfessionalManageAppointments -> datasource : rateMyCleaningServiceByAppointment(int)
+datasource --> CleaningProfessionalManageAppointments : boolean = rateMyCleaningServiceByAppointment(int)
+CleaningProfessionalManageAppointments --> Interface : displayRateByAppointmentId(int)
+
+CleaningProfessional -> Interface : postAReviewToMyCleaningServiceByAppointmentId
+Interface -> CleaningProfessionalManageAppointments : ppostAReviewToMyCleaningServiceByAppointmentId(int)
+CleaningProfessionalManageAppointments -> datasource : postAReviewToMyCleaningServiceByAppointmentId(int)
+datasource --> CleaningProfessionalManageAppointments : boolean = displayReviewsByIdAndIsOkay(int, boolean)
+CleaningProfessionalManageAppointments --> Interface : boolean = displayReviewsByIdAndIsOkay(int, boolean)
+datasource -> CleaningProfessionalManageAppointments : Notifications(Appointments)
+CleaningProfessionalManageAppointments --> Interface : Notifications(Appointments)
+
+
+@enduml

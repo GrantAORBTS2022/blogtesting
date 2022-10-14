@@ -1,0 +1,36 @@
+@startuml
+actor Admin #red
+participant Interface
+participant AdminManageBooking
+database datasource
+participant Integration
+
+Interface --> Admin : displayBookingWithAssignStatus()
+datasource --> AdminManageBooking : Bookings
+AdminManageBooking --> Interface : Bookings
+Admin -> Interface :getIdBookingByClick()
+Interface -> AdminManageBooking : getBookingById(int)
+AdminManageBooking->datasource : getBookingById(int)
+datasource --> AdminManageBooking : Booking = getBookingById(int)
+AdminManageBooking --> Interface : Booking = getBookingById(int)
+Admin -> AdminManageBooking: getProfessionalByName
+AdminManageBooking -> datasource : getProfessionalByName(String)
+datasource --> AdminManageBooking : int = getProfessionalByName(String)
+AdminManageBooking -> datasource : getProfessionalById(String)
+datasource --> AdminManageBooking : Professional = getProfessionalById(String)
+
+alt Cleaning Professional not Available
+AdminManageBooking -> Interface: false = isAvailable(Professional,Booking)
+end
+
+AdminManageBooking -> Interface: true = isAvailable(Professional,Booking)
+Admin -> Interface : createAppoinment
+Interface ->AdminManageBooking :createAppointment(boolean)
+AdminManageBooking -> datasource : createAppoinment(boolean)
+datasource --> AdminManageBooking : Appoinment = createAppoinment(boolean)
+AdminManageBooking -> Integration : pushNotification(Booking, Appoinment)
+AdminManageBooking -> datasource : Notification(Booking, Appoinment)
+AdminManageBooking -->Interface : Appoinment = createAppoinment(boolean)
+AdminManageBooking -> Interface : Notification(Booking, Appoinment)
+
+@end

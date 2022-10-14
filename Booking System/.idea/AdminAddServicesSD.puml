@@ -1,0 +1,25 @@
+@startuml
+actor Admin #red
+participant Interface
+participant AddServices
+database datasource
+
+Interface -> AddServices : fetchExistingServices()
+AddServices -> datasource : fetchExistingServices()
+datasource --> AddServices : fetchServices()
+AddServices-->Interface : fetchServices()
+
+Admin -> Interface : addNewService
+Interface -> AddServices : addServices(Services)
+AddServices -> datasource : addServices(Services)
+
+alt addingService failed
+datasource --> AddServices : false = addServices(Services)
+AddServices --> Interface : display Adding new services Failed
+end
+
+datasource --> AddServices : true = addServices(Services)
+AddServices --> Interface : true = addServices(Services)
+
+
+@enduml

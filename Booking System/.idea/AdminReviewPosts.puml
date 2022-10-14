@@ -1,0 +1,29 @@
+@startuml
+actor Admin #blue
+participant Interface
+participant ReviewPosts
+database datasource
+
+Admin -> Interface : Admin/staff Credentials
+Interface -> datasource : get UserDetailsByEmail()
+datasource -->Interface : Admin/StaffDetails()
+datasource --> ReviewPosts : displayReviewPost()
+ReviewPosts -->Interface : displayReviewPost()
+Admin -> Interface : getPostDetailsById(int)
+Interface -> ReviewPosts : getPostDetailsById(int)
+ReviewPosts -> datasource :  getPostDetailsById(int)
+datasource --> ReviewPosts : Post = getPostDetailsById(int)
+ReviewPosts --> Interface : Post = getPostDetailsById(int)
+Admin -> Interface : approvedPost()
+Interface -> ReviewPosts : approvedPost(int)
+ReviewPosts -> datasource :  approvedPost(int)
+
+alt
+Admin -> Interface : disApprovedPost()
+Interface -> ReviewPosts : disApprovedPost()
+ReviewPosts -> datasource :  disApprovedPost()
+
+end
+datasource --> ReviewPosts : boolean = approvedStatus()
+ReviewPosts --> Interface : boolean = approvedStatus()
+@enduml

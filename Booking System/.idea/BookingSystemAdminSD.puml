@@ -1,0 +1,81 @@
+@startuml
+
+
+actor Admin #red
+participant  Interface
+participant AdminAddBooking
+database  datasource
+
+
+
+Admin -> Interface : SelectService
+AdminAddBooking --> Interface : displayEachServiceAsTabs
+AdminAddBooking --> Interface : displayBookingForm
+AdminAddBooking --> Interface : displayAddsOn
+Admin -> Interface : getCustomerByName(String)
+Interface -> AdminAddBooking : getCustomerByName(String)
+AdminAddBooking -> datasource: getCustomerByName(String)
+datasource --> AdminAddBooking : int = getCustomerByName(String)
+AdminAddBooking -> datasource: getCustomerByID(int)
+alt invalid customer ID
+datasource --> AdminAddBooking : 0 = getCustomerByID(int)
+AdminAddBooking --> Interface : displayError
+end
+datasource --> AdminAddBooking : int = getCustomerByID(int)
+AdminAddBooking --> Interface : displayClientDetails
+Admin -> Interface : selectServiceAddOnForEachService()
+Interface -> datasource: selectServiceAddOnForEachService()
+datasource --> AdminAddBooking : int = selectServiceAddOnForEachService()
+AdminAddBooking --> Interface : computePayment(int)
+Admin -> Interface : adjustPrice
+Interface ->AdminAddBooking : adjustPrice(double)
+AdminAddBooking --> Interface : true = isPriceValid(double)
+
+Admin -> Interface : adjustTime
+Interface ->AdminAddBooking : getDateTimeFromDateTimePicker
+AdminAddBooking --> Interface : true = isTimeValid(DateTime)
+Admin -> Interface : setPriorityLevel
+Interface -> AdminAddBooking : getPriorityLevel(String)
+AdminAddBooking --> Interface : String = getPriorityLevel(String)
+Admin -> Interface : setFrequency
+Interface -> AdminAddBooking : getFrequency(String)
+AdminAddBooking --> Interface : String = getFrequency
+Admin -> Interface :getCleaningProfessionalByName
+Interface -> AdminAddBooking : getCleaningProfessionalByName(String)
+AdminAddBooking -> datasource : getCleaningProfessionalByName(String)
+datasource --> AdminAddBooking : int = getCleaningProfessionalByName(String)
+AdminAddBooking -> datasource : getCleaningProfessionalAvailabilityById(int)
+datasource -> AdminAddBooking  : true = getCleaningProfessionalAvailabilityById(int)
+alt CleaningProfessional not available
+datasource -> AdminAddBooking  : false = getCleaningProfessionalAvailabilityById(int)
+AdminAddBooking -> Interface : false = getCleaningProfessionalAvailabilityById(int)
+end
+datasource --> AdminAddBooking : CleaningProfessional = getCleaningProfessionalById(int)
+AdminAddBooking -> datasource : isAvailable
+AdminAddBooking --> Interface : CleaningProfessional = getCleaningProfessionalById(int)
+Admin -> Interface : save as qoute
+Interface -> AdminAddBooking : saveAsQoute()
+AdminAddBooking -> datasource : saveAsQoute()
+datasource --> AdminAddBooking : boolean = saveAsQoute()
+AdminAddBooking --> Interface : boolean = saveAsQoute()
+
+Admin -> Interface : save as draft
+Interface -> AdminAddBooking : saveAsDraft()
+AdminAddBooking -> datasource : saveAsDraft()
+datasource --> AdminAddBooking : boolean = saveAsDraft()
+AdminAddBooking --> Interface : boolean = saveAsDraft()
+
+Admin -> Interface : save as draft
+Interface -> AdminAddBooking : saveAsDraft()
+AdminAddBooking -> datasource : saveAsDraft()
+datasource --> AdminAddBooking : boolean = saveAsDraft()
+AdminAddBooking --> Interface : boolean = saveAsDraft()
+
+Admin -> Interface : save as draft
+Interface -> AdminAddBooking : saveBooking()
+AdminAddBooking -> datasource : saveBooking()
+datasource --> AdminAddBooking : boolean = saveBooking()
+AdminAddBooking --> Interface : boolean = saveBooking()
+
+
+@enduml

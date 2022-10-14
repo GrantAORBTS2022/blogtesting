@@ -1,0 +1,7 @@
+@startuml
+
+actor ProCleaners #blue
+participant CleaningProfessionalManageAppointment
+database tets
+
+@enduml

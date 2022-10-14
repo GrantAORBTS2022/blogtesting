@@ -1,0 +1,65 @@
+@startuml
+
+
+actor Client #red
+participant Interface
+participant ClientAddBooking
+database  datasource
+
+datasource --> ClientAddBooking : displayEachServiceAsTabs
+datasource --> ClientAddBooking : displayBookingForm
+datasource --> ClientAddBooking : displayAddsOn
+
+ClientAddBooking --> Interface : displayEachServiceAsTabs
+ClientAddBooking --> Interface : displayBookingForm
+ClientAddBooking --> Interface : displayAddsOn
+Client -> Interface : SelectService
+Client -> Interface : getCustomerByName(String)
+Interface -> ClientAddBooking : getCustomerByName(String)
+ClientAddBooking -> datasource: getCustomerByName(String)
+datasource --> ClientAddBooking : int = getCustomerByName(String)
+ClientAddBooking -> datasource: getCustomerByID(int)
+alt invalid customer ID
+datasource --> ClientAddBooking : 0 = getCustomerByID(int)
+ClientAddBooking --> Interface : displayError
+end
+datasource --> ClientAddBooking : int = getCustomerByID(int)
+ClientAddBooking --> Interface : displayClientDetails
+Client -> Interface : selectServiceAddOnForEachService()
+Interface -> datasource: selectServiceAddOnForEachService()
+datasource --> ClientAddBooking : int = selectServiceAddOnForEachService()
+ClientAddBooking --> Interface : computePayment(int)
+
+ClientAddBooking --> Interface : true = isPriceValid(double)
+
+Client -> Interface : adjustTime
+Interface ->ClientAddBooking : getDateTimeFromDateTimePicker
+ClientAddBooking --> Interface : true = isTimeValid(DateTime)
+Client -> Interface : setPriorityLevel
+Interface -> ClientAddBooking : getPriorityLevel(String)
+ClientAddBooking --> Interface : String = getPriorityLevel(String)
+Client -> Interface : setFrequency
+Interface -> ClientAddBooking : getFrequency(String)
+ClientAddBooking --> Interface : String = getFrequency
+
+Client -> Interface : save as draft
+Interface -> ClientAddBooking : saveAsDraft()
+ClientAddBooking -> datasource : saveAsDraft()
+datasource --> ClientAddBooking : boolean = saveAsDraft()
+ClientAddBooking --> Interface : boolean = saveAsDraft()
+
+Client -> Interface : save as draft
+Interface -> ClientAddBooking : saveAsDraft()
+ClientAddBooking -> datasource : saveAsDraft()
+datasource --> ClientAddBooking : boolean = saveAsDraft()
+ClientAddBooking --> Interface : boolean = saveAsDraft()
+
+Client -> Interface : save as draft
+Interface -> ClientAddBooking : saveBooking()
+ClientAddBooking -> datasource : saveBooking()
+datasource --> ClientAddBooking : boolean = saveBooking()
+ClientAddBooking --> Interface : boolean = saveBooking()
+
+@enduml
+
+

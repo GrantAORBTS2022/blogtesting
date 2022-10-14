@@ -1,0 +1,53 @@
+@startuml
+actor Client #green
+participant Interface
+participant ClientManageAppointments
+database datasource
+
+Client -> Interface : loginWithEmail
+Interface -> ClientManageAppointments : clientGetDetailsByEmail(String)
+ClientManageAppointments -> datasource : clientGetDetailsByEmail(String)
+datasource --> ClientManageAppointments: Client = clientGetDetailsByEmail(String)
+ClientManageAppointments -> datasource : getAppointmentsByClient(Client)
+
+alt No Booking/Appointments
+datasource --> ClientManageAppointments : 0 = getAppointmentsByClient(Client)
+ClientManageAppointments --> Interface : display none on upcoming Appointments
+end
+
+datasource --> ClientManageAppointments : Appointments = getAppointmentsByClient(Client)
+ClientManageAppointments --> Interface :display Upcoming/Previous/Cancelled appointments
+Client -> Interface : viewBookingDetails
+Interface -> ClientManageAppointments : viewBookingDetails(int)
+ClientManageAppointments -> datasource : viewBookingDetails(int)
+datasource --> ClientManageAppointments : Booking = viewBookingDetails(int)
+ClientManageAppointments --> Interface :  Booking = viewBookingDetails(int)
+
+Client -> Interface : cancelAppoinment
+Interface -> ClientManageAppointments : cancelAppoinment(int)
+ClientManageAppointments -> datasource : isBeyond24Hrs(int)
+datasource --> ClientManageAppointments : boolean = isBeyond24Hrs(int)
+ClientManageAppointments --> Interface : double = chargeCancellationFee(boolean)
+
+Client -> Interface : postponeAppoinment
+Interface -> ClientManageAppointments : postponeAppoinment(int)
+ClientManageAppointments -> datasource : isBeyond24Hrs(int)
+datasource --> ClientManageAppointments : boolean = isBeyond24Hrs(int)
+ClientManageAppointments --> Interface : double = chargePostponeAppoinmentFee(boolean)
+
+Client -> Interface : rateCleaningProfessionalByAppointment
+Interface -> ClientManageAppointments : rateCleaningProfessionalByAppointment(int)
+ClientManageAppointments -> datasource : rateCleaningProfessionalByAppointment(int)
+datasource --> ClientManageAppointments : boolean = rateCleaningProfessionalByAppointment(int)
+ClientManageAppointments --> Interface : displayRateByAppointmentId(int)
+
+Client -> Interface : postAReviewToCleaningProfessionalAppointmentById
+Interface -> ClientManageAppointments : postAReviewToCleaningProfessionalAppointmentById(int)
+ClientManageAppointments -> datasource : postAReviewToCleaningProfessionalAppointmentById(int)
+datasource --> ClientManageAppointments : boolean = displayReviewsByIdAndIsOkay(int, boolean)
+ClientManageAppointments --> Interface : boolean = displayReviewsByIdAndIsOkay(int, boolean)
+datasource -> ClientManageAppointments : Notifications(Appointments)
+ClientManageAppointments --> Interface : Notifications(Appointments)
+
+
+@enduml

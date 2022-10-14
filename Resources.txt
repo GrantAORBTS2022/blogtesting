@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/32532900/not-able-to-create-super-user-with-django-manage-py

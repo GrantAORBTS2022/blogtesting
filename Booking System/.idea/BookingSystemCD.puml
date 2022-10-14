@@ -1,0 +1,149 @@
+@startuml
+
+class AdminAddService {
+    //set applicable tools/equipment to use on each services
+    //this can be set in setting module
+    + addNewService(Service) : boolean
+    + getIdOfServiceByName(String) : int
+    + getServiceDetailsById(int) : Service
+    + addAddOnToService(Service) : boolean
+}
+
+class AdminAddBooking {
+    - SpecialNotesOrInstructions : String
+    + displayEachServicesAsTabs() : void
+    + getIdOfExistingCustomerByName(String) : int
+    + addNewCustomerID(Customer) : int
+    + getCustomerDetailsByID(int) : Customer
+    + displayAddOnForEachService() : void
+    + selectServiceGetsAddOnId(int) : int[]
+    + computePayment(int[]) : double
+    + addjustPrice(double) : double
+    + addjustTime(Time) : boolean
+    + getIdOfCleaningProfessionalByName(String) : int
+    + getCleaningProfessionalById(int) : Professional
+    + getDateTimeFromDatePicker() : DateTime
+    + getPriorityLevel() : String
+    + displayPaymentInformation(int[]) : void
+    + displayPaymentOptions() : void
+    + setCleaningFrequency(String) : void
+    + isPriceValid(double) : boolean
+    + saveAsQoute() : boolean
+    + saveAsDraft() : boolean
+    + saveBooking() : boolean
+}
+class AdminManageBookings {
+    + displayBookingsWithAssignStatus() : void
+    + getBookingByClick() : Booking
+    + getIdOfCleaningProfessionalByName(String) : int
+    + getCleaningProfessionalById(int) : Professional
+    + checkCleaningProfessionalAvailability(Booking, Professional) : boolean
+    + createAppointment(boolean) : int
+    + pushNotification(Appointments, Booking)
+    + Notification(Appointments, Booking)
+}
+
+class ClientManageAppointments {
+    + getClientDetailsByEmail(String) : Client
+    + displayClientDetails(Client) : void
+    + getBookingsByClient(Client) : Bookings
+    + getAppointmentsByBooking(Bookings) : Appointments
+    + displayUpcomingAppointment(Appointments) : void
+    + displayPreviousAppointments(Appointments) : void
+    + displayCancelledAppointments(Appointments) : void
+    + isBeyond24Hrs(int) : boolean
+    + viewBookingDetails(int) : void
+    + cancelAppointment(int) : int
+    + postponeAppointment(int) : int
+    + chargeCancellationFee(boolean) : double
+    + chargePostponeAppointmentFee(boolean) : double
+    + getIdOfAppointment(Appointments) : int
+    + rateCleaningProfessionalByAppointmentId(int) : boolean
+    + displayRateByAppointmentId(int) :
+    + postAReviewToCleaningProfessionalService(int) : boolean
+    + getReviewsByAppointmentId(int) : boolean
+    + displayReviewsByAppointmentIdAndIsOkay(int, boolean)
+    + pushNotification(Appointments) //set tools to use on each services
+    + Notification(Appointments)
+}
+
+class ClientAddBooking {
+    - SpecialNotesOrInstructions : String
+    + getCustomerDetailsByEmail(String) : Customer
+    + displayEachServicesAsTabs() : void
+    + displayAddOnForEachService() : void
+    + selectServiceGetsAddOnId(int) : int[]
+    + getDateTimeFromDatePicker() : DateTime
+    + getPriorityLevel() : String
+    + setCleaningFrequency(String) : void
+    + computePayment() : double
+    + displayPaymentInformation(int[]) : void
+    + displayPaymentOptions() : void
+    + isPriceValid(double) : boolean
+    + saveAsDraft() : boolean
+    + saveBooking() : boolean
+}
+
+class CleaningProfessionalManageAppointment {
+    + getCleaningProfessionalDetailsByEmail(String) : CleaningProfessional
+    + displayCleaningProfessionalDetails(CleaningProfessional) : void
+    + getAppointmentsByCleaningProfessional(CleaningProfessional) : Appointments
+    + displayUpcomingAppointment(Appointments) : void
+    + displayPreviousAppointments(Appointments) : void
+    + displayCancelledAppointments(Appointments) : void
+    + viewBookingDetails(int) : void
+    + displayTargetServicesInChecklist() : void
+    + getIdOfAppointment(Appointments) : int
+    + displayReviewsByAppointmentIdAndIsOkay(int, boolean)
+    + pushNotification(Appointments)
+    + Notification(Appointments)
+}
+
+class ReviewPosts{
+    displayClientPosts() : void
+    getIdOfSelectedPost() : int
+    getPostDetailsById(int) : Post
+    approvedPost(Post) : int
+    disApprovedPost(Post) : int
+}
+
+interface AdminMenu {
+  + newBooking(Service) : void
+  + bookings() : void
+  + newService() : void
+  + Reviews Approval() : void
+  + saveAsQoute() : void
+  + saveAsDraft() : void
+  + savedBooking() : void
+  + displaySetting() : void
+  + reports() : void
+  + setting() : void
+}
+
+interface ClientMenu {
+  + newBooking(Service) : void
+  + bookings() : void
+  + saveAsDraft() : void
+  + savedBooking() : void
+  + billings() : void
+  + setting() : void
+}
+
+interface CleaningProfessionalMenu {
+ + bookings() : void
+ + reports() : void
+ + payments() : void
+ + setting() : void
+}
+
+AdminMenu -- AdminAddBooking
+AdminMenu -- AdminManageBookings
+AdminMenu -- AdminAddService
+AdminMenu - ReviewPosts
+
+ClientMenu -- ClientAddBooking
+ClientMenu -- ClientManageAppointments
+
+CleaningProfessionalMenu -- CleaningProfessionalManageAppointment
+
+@enduml
